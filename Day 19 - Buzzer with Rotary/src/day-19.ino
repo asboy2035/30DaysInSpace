@@ -10,7 +10,7 @@
  * our ascent even safer.  The Day 18 sketch allowed us to ascend faster than is
  * safe, so let's limit the RATE of ascent to a slow rate.
  *
- * In addition, we'll add a buzzer to our curcuit to give us an audible alert if
+ * In addition, we'll add a buzzer to our circuit to give us an audible alert if
  * our rise rate is faster than what is safe.
  *
  * Lastly, it turns out our safety stop depths are when we're 50% towards the
