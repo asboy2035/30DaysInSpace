@@ -1,70 +1,33 @@
-/*
- * 30 Days - Lost in Space
- * Day 24 - Back To Orbit
- *
- * Explorer, the day has arrived!  Let's get that lander up into space again.
- * We will initialize our systems by setting our Thruster, Systems and Confirmation
- * switches to "off" and then enable our countdown by turning each of them on in
- * turn.
- *
- * Once everything has been turned on the countdown will begin (so be sure you're
- * all buckled in tight!).  If you see anything abnormal during the countdown you
- * can abort the liftoff by turning off any of the switches.  Simply turn them all
- * off again to re-initialize the sequence.
- *
- * Once the countdown reaches zero the ship will liftoff, placing the lander into
- * a random orbit.  Once the engines fire, the liftoff CANNOT be aborted!
- *
- * Let's get you back into space, Explorer, and next week we'll work to get your
- * fragile lander back to your mother ship!
- *
- * Learn more at https://learn.inventr.io/adventure
- *
- * Alex Eschenauer
- * David Schmidt
- * Greg Lyzenga
- */
-
-/*
- * Arduino concepts introduced/documented in this lesson.
- * - enum
- * - ternary operation
- *
- * Parts and electronics concepts introduced in this lesson.
- * -
- */
-
-// Explicitly include Arduino.h
 #include "Arduino.h"
+#include <TM1637Display.h> // 7-seg display
+#include <U8g2lib.h> // OLED display
 
-// Include file for 4 digit - 7 segment display library
-#include <TM1637Display.h>
-
-// Extensive documentation for this library can be found at https://github.com/olikraus/u8g2
-#include <U8g2lib.h>  // Include file for the U8g2 library.
-#include "Wire.h"     // Sometimes required for I2C communications.
-
-// Define macros to convert milliseonds to minutes or seconds, rounded UP to next second.
+// Define macros to convert milliseconds to minutes or seconds, rounded UP to next second.
 #define numberOfMinutes(_milliseconds_) (((_milliseconds_ + 999) / 1000) / 60)
 #define numberOfSeconds(_milliseconds_) (((_milliseconds_ + 999) / 1000) % 60)
 
-// Pin connections for our 4 digit counter
-const byte COUNTER_DISPLAY_DIO_PIN = 4;
-const byte COUNTER_DISPLAY_CLK_PIN = 5;
-// Construct counter_display handle.
-TM1637Display counter_display(COUNTER_DISPLAY_CLK_PIN, COUNTER_DISPLAY_DIO_PIN);
 
-// Define pins for our DIP switches
-const byte THRUST_LEVER_PIN = 9;
-const byte SYSTEMS_LEVER_PIN = 8;
-const byte CONFIRM_LEVER_PIN = 7;
+// Pins
+// 7-segment display
+constexpr byte COUNTER_DISPLAY_DIO = 4;
+constexpr byte COUNTER_DISPLAY_CLK = 5;
 
-// Define pin for buzzer
-const byte BUZZER_PIN = 6;
+// DIP switches
+constexpr byte THRUST_LEVER_PIN = 9;
+constexpr byte SYSTEMS_LEVER_PIN = 8;
+constexpr byte CONFIRM_LEVER_PIN = 7;
+
+// Buzzer
+constexpr byte BUZZER_PIN = 6;
+
+
+// Hardware
+TM1637Display counter_display(COUNTER_DISPLAY_CLK, COUNTER_DISPLAY_DIO);
 
 // Use _2_ version of constructor and firstPage()/nextPage() for OLED
 // graphics to save memory.
 U8G2_SH1106_128X64_NONAME_2_HW_I2C lander_display(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
+
 
 // Define size of our lander graphic so it can be accurately placed on display
 const byte LANDER_HEIGHT = 25;  // height of our lander image, in bits
@@ -109,7 +72,7 @@ enum LIFTOFF_STATE {
   ABORT       // Countdown aborted
 };
 
-// *********************************************
+
 void setup() {
   Serial.begin(9600);
 
@@ -131,14 +94,11 @@ void setup() {
   lander_display.clearDisplay();  // Clear OLED display
 }
 
-// *********************************************
-// *              LOOP()                       *
-// *********************************************
 
 // To keep beeping and animations steady we will attempt to have each loop
 // take the same amount of time.  Occasionally loops may take longer, but
 // this constant defines the minimum time each loop will take to run.
-const unsigned long MIN_LOOP_TIME = 200;  // minimum 200 ms time per loop
+constexpr unsigned long MIN_LOOP_TIME = 200;  // minimum 200 ms time per loop
 
 void loop() {
   // Initialize static variables first time through loop().  Any values set
@@ -147,7 +107,7 @@ void loop() {
   static unsigned long countdown_start_time;                    // millis() value when countdown begins
   static enum LIFTOFF_STATE liftoff_state = INIT;               // Begin sequence in INIT state
 
-  // Here we define a value that is toggled between true/false ever time through the loop
+  // Here we define a value that is toggled between true/false every time through the loop
   // This can be used to create a beeping tone or could be used to blink text.
   static bool loop_toggle = true;  // if our loop_toggle is true this time through the loop
 
@@ -166,7 +126,7 @@ void loop() {
    * current state of our liftoff sequence, switching states as different events are
    * detected.
    *
-   * NOTE: Normally this section of code would done in a switch/case construct.  However
+   * NOTE: Normally this section of code would be done in a switch/case construct.  However,
    *       a bug in the compiler caused certain cases to NEVER execute.  Because of this
    *       bug (hopefully fixed soon) we use the less clear if/else if/else format.
    *
@@ -183,7 +143,7 @@ void loop() {
    */
 
   if (liftoff_state == INIT) {  // INIT state
-    // INIT state requires that all switches start out as "off".
+    // requires that all switches start out as "off".
 
     // If all three switches are OFF (false) we can turn off the beeping
     // and change state to PENDING.

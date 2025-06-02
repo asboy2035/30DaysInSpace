@@ -5,9 +5,9 @@
 
 // Pins
 // Interrupts are supported on pins 2 and 3.
-const byte ScrollerClkPin = 2;
-const byte ScrollerDtPin = 3;
-const byte ScrollerSwPin = 4;
+constexpr byte ScrollerClkPin = 2;
+constexpr byte ScrollerDtPin = 3;
+constexpr byte ScrollerSwPin = 4;
 
 // Hardware
 U8G2_SH1106_128X64_NONAME_2_HW_I2C statusDisplay(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
@@ -103,8 +103,8 @@ const Status Statuses[] = {
   }
 };
 
-const int NumTotalStatuses = sizeof(Statuses) / sizeof(Statuses[0]);
-const int NumVisibleLines = 5;
+constexpr int NumTotalStatuses = sizeof(Statuses) / sizeof(Statuses[0]);
+constexpr int NumVisibleLines = 5;
 
 // Global Variables
 int prevScrollPos = 0;
@@ -113,6 +113,9 @@ int cursorIndex = 0;
 int isDisplayingStatus = false;
 
 // Functions
+void drawMessages();
+void displayStatus(Status status);
+
 bool isButtonPressed() {
   if (digitalRead(ScrollerSwPin) == LOW) {
     delay(50); // Basic debounce
@@ -141,20 +144,20 @@ void drawDisplay() {
 void drawMessages() {
   statusDisplay.firstPage();
   do {
-    int lineHeight = 12; // 8px font + 2px spacing
-    int boxPadding = 1;
-    int fontHeight = statusDisplay.getMaxCharHeight(); // should be 8 for 5x8 font
+    const int fontHeight = statusDisplay.getMaxCharHeight(); // should be 8 for 5x8 font
 
     for (int i = 0; i < NumVisibleLines; i++) {
-      int statusIndex = scrollIndex + i;
+      constexpr int lineHeight = 12;
+      const int statusIndex = scrollIndex + i;
       if (statusIndex >= NumTotalStatuses) break;
 
-      int y = (i * lineHeight) + 2;
+      const int y = (i * lineHeight) + 2;
 
       // Draw highlight for selected item (top visible item)
       if (i == cursorIndex) {
-        int boxHeight = fontHeight + (boxPadding * 2);
-        int boxWidth = statusDisplay.getDisplayWidth(); // full width
+        constexpr int boxPadding = 1;
+        const int boxHeight = fontHeight + (boxPadding * 2);
+        const int boxWidth = statusDisplay.getDisplayWidth(); // full width
         statusDisplay.drawRBox(
           0, y - boxPadding,
           boxWidth, boxHeight,
@@ -171,18 +174,16 @@ void drawMessages() {
   } while (statusDisplay.nextPage());
 }
 
-void displayStatus(Status status) {
+void displayStatus(const Status status) {
   statusDisplay.firstPage();
   do {
-    int boxPadding = 2;
-    int titleFontHeight;
-    int descFontHeight;
+    constexpr int boxPadding = 2;
     int y = 0;
 
     // Set and measure title font
     statusDisplay.setFont(u8g2_font_6x12_tr); // Bigger font for title
-    titleFontHeight = statusDisplay.getMaxCharHeight();
-    int titleBoxHeight = titleFontHeight + (boxPadding * 2);
+    const int titleFontHeight = statusDisplay.getMaxCharHeight();
+    const int titleBoxHeight = titleFontHeight + (boxPadding * 2);
 
     // Draw rounded rectangle behind title
     statusDisplay.drawRBox(
@@ -198,7 +199,6 @@ void displayStatus(Status status) {
 
     // Set font for description
     statusDisplay.setFont(u8g2_font_6x10_tr); // Smaller font for description
-    descFontHeight = statusDisplay.getMaxCharHeight();
     y += titleBoxHeight + 4; // Add some spacing
 
     // Draw description
@@ -237,8 +237,8 @@ void loop() {
   drawDisplay();
 
   if (scroller.get_change()) {
-    int newScrollerPos = scroller.get_count();
-    int delta = newScrollerPos - prevScrollPos;
+    const int newScrollerPos = scroller.get_count();
+    const int delta = newScrollerPos - prevScrollPos;
 
     if (delta > 0) {
       // Scrolling down

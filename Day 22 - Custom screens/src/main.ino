@@ -6,26 +6,27 @@
 
 U8G2_SH1106_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
 
-typedef struct Point {
+struct Point {
   byte x;
   byte y;
 };
 
-typedef struct Circle {
+struct Circle {
   Point center;
   byte radius;
 };
 
-typedef struct Box {
+struct Box {
   Point topLeft;
   byte width;
   byte height;
 };
 
+
 // -MARK: Funcs
 void drawDisc(
   U8G2_SH1106_128X64_NONAME_F_HW_I2C& display,
-  Circle circle
+  const Circle circle
 ) {
   display.drawDisc(
     circle.center.x,
@@ -34,51 +35,18 @@ void drawDisc(
   );
 }
 
-// void bounceCircle(
-//   U8G2_SH1106_128X64_NONAME_F_HW_I2C& display,
-//   Circle circle,
-//   int steps,
-//   int stepSize,
-//   int stepDelay
-// ) {
-//   for (int i = 0; i <= steps; i++) {
-//     circle.center.y -= stepSize;
-//     drawDisc(display, circle);
-//     display.sendBuffer();
-
-//     delay(stepDelay + steps/(i+1));
-//     display.clearBuffer();
-//   }
-
-//   for (int i = 0; i <= steps; i++) {
-//     circle.center.y += stepSize;
-//     drawDisc(display, circle);
-//     display.sendBuffer();
-
-//     int offset = stepDelay + steps - i*3;
-//     if (offset <= 0) {
-//       offset = 10;
-//     }
-//     Serial.println(offset);
-//     delay(offset);
-//     display.clearBuffer();
-//   }
-// }
-
-
 float fallDown(
   Circle circle,
-  int maxBounces,
-  float gravity,
-  int stepDelay
+  const int maxBounces,
+  const float gravity,
+  const int stepDelay
 ) {
   float velocity = 0;
   float position = circle.center.y;
-  float floor = position;
-  float timeStep = 0.75;  // Approximate time per frame
-  
+
   Serial.println("Before for loop");
   for (int bounce = 0; bounce < maxBounces; bounce++) {
+    constexpr float timeStep = 0.75;
     // Update velocity with acceleration (gravity)
     // v = u + at
     velocity += gravity * timeStep;
@@ -95,7 +63,7 @@ float fallDown(
     }
 
     // Update circle's position
-    circle.center.y = (int)position;
+    circle.center.y = static_cast<int>(position);
     Serial.println(circle.center.y);
 
     // Draw and update display
@@ -110,18 +78,17 @@ float fallDown(
 
 void bounceUp(
   Circle circle,
-  int maxBounces,
-  float gravity,
-  float startingPosition,
+  const int maxBounces,
+  const float gravity,
+  const float startingPosition,
   float velocity,
-  int stepDelay
+  const int stepDelay
 ) {
-  // float velocity = 0;
   float position = startingPosition;
-  float timeStep = 0.75;  // Approximate time per frame
 
   Serial.println("Before for loop");
   for (int bounce = 0; bounce < maxBounces; bounce++) {
+    constexpr float timeStep = 0.75;
     // Update velocity with acceleration (gravity)
     // v = u + at
     velocity -= gravity * timeStep;
@@ -143,7 +110,7 @@ void bounceUp(
     }
 
     // Update circle's position
-    circle.center.y = (int)position;
+    circle.center.y = static_cast<int>(position);
     Serial.println(circle.center.y);
 
     // Draw and update display
@@ -156,19 +123,21 @@ void bounceUp(
 
 void bounceCircle(
   U8G2_SH1106_128X64_NONAME_F_HW_I2C& display,
-  Circle circle,
-  int maxBounces,
-  float gravity,
+  const Circle circle,
+  const int maxBounces,
+  const float gravity,
   float energyLoss,
-  int stepDelay
+  const int stepDelay
 ) {  
   Serial.println("Circle Y 1: " + String(circle.center.y));
 
-  float finalVelocity = fallDown(circle, maxBounces, gravity, stepDelay);
+  const float finalVelocity = fallDown(circle, maxBounces, gravity, stepDelay);
   bounceUp(circle, maxBounces, gravity, 55.0, finalVelocity, stepDelay);
   
   Serial.println("Circle Y 2: " + String(circle.center.y));
 }
+
+
 // -MARK: Main
 void setup() {
   display.begin();
@@ -181,7 +150,6 @@ void loop() {
     5
   };
 
-  // drawDisc(display, circle1);
   bounceCircle(display, circle1, 100, 0.8, 0.7, 30);
   delay(250);
 }

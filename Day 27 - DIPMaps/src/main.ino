@@ -1,5 +1,4 @@
 #include <U8g2lib.h> // Display library for SH1106 OLED
-#include "Wire.h" // I2C communication
 #include "switch_bitmaps.h" // Bitmap images for switch positions
 #include <TM1637Display.h> // 4-digit 7-segment display
 

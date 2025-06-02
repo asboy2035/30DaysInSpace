@@ -1,50 +1,5 @@
-/*
- * 30 Days - Lost in Space
- * Day 26 - Fun With Bitmaps
- *
- * Explorer, your lander is finally back in space, but we still need to rejoin
- * the mothership so more work is required.
- *
- * As we continue to build up your control panel, we can see that our loop
- * is running slower and slower, especially as we draw more complex graphics
- * on the display (like our lander).
- *
- * There is a more efficient way to display graphics on our display, though.
- * What if we draw an image *once* and save that picture?  Then we can just
- * move it quickly onto our display rather than going through the work to draw
- * each piece separately.
- *
- * Our graphics library provides a way to do JUST that using something called
- * a "bitmap".  This is simply a representation of an image using zero and one
- * bit.  A zero bit leaves a pixel turned off, and a one bit turns it on.
- *
- * Our image can now be saved in our sketch as an array of bits that then gets
- * mapped to our display.  (Thus, "bitmaps").  You can find a number of sample
- * images below our loop() below, along with an explanation of how they were
- * created and represented in our sketch.
- *
- * Learn more at https://learn.inventr.io/adventure
- *
- * Alex Eschenauer
- * David Schmidt
- * Greg Lyzenga
- */
-
-/*
- * Arduino concepts introduced/documented in this lesson.
- * - bitmaps
- * - hexadecimal
- * - forward declarations
- * - pointers
- *
- * Parts and electronics concepts are introduced in this lesson.
- * -
- */
-
-// Explicitly include Arduino.h
 #include "Arduino.h"
 
-// Extensive documentation for this library can be found at https://github.com/olikraus/u8g2
 #include <U8g2lib.h>  // Include file for the U8g2 library.
 #include "Wire.h"     // Sometimes required for I2C communications.
 #include "bitmaps.h"  // Include our bitmap definitions.
@@ -94,13 +49,11 @@ const static unsigned char* bitmaps[] = {
   liverpool,
 };
 
-// ************************************************
 void setup(void) {
   Serial.begin(9600);
   lander_display.begin();   // initialize lander display
 }
 
-// ************************************************
 void loop(void) {
 
   // The number of items in our array is the total size of our array (in bytes)
@@ -120,30 +73,3 @@ void loop(void) {
     delay(4000);
   }
 }
-
-/*
- * Graphics data arrays definition
- *
- * We need to define each of our images using zeros and ones, and there are a
- * number of ways we can do this.
- *
- * 1) We could use decimal numbers to represent each byte of data using the
- *    numbers 0-255:
- *      234, 0, 127, 255, ...
- *    But this is hard to align since each byte is 1-3 digits long.
- * 2) We could use binary constants like you've used before:
- *      0b11101101, 0b00000000, 0b01111111, 0b11111111, ...
- *    But this isn't very compact and is more error-prone if typed manually.
- *
- * There is another way of representing data that is commonly used for computer
- * code.  Instead of only having 0 or 1 (two values) to represent a single bit,
- * we can use more symbols.  We could use decimal (base 10) numbers, but this doesn't
- * map well onto computers with data lengths that are powers of two (1, 2, 4, 8, etc.).
- *
- * Programmers created Hexadecimal notation to address these issues.  Hexadecimal
- * is a base-16 number system, meaning it has 16 distinct symbols: 0-9 to represent
- * values zero to nine, and A-F to represent values ten to fifteen.  This allows
- * data to be represented in a compact format that aligns well with bit lengths that
- * are powers of 2.
- */
-
