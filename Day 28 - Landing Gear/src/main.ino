@@ -142,7 +142,11 @@ void loop() {
   Serial.print(", ");
   Serial.println(confirm_lever);
 
-  processState(thrust_lever, systems_lever, confirm_lever);
+  processState(
+    thrust_lever,
+    systems_lever,
+    confirm_lever
+  );
 
   // Display selected bitmap on our OLED lander display
   landerDisplay.firstPage();
