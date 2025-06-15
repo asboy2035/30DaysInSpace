@@ -155,6 +155,8 @@ String onOff(bool val);
 
 const unsigned char* getEndingBitmap();
 
+void processInflightState();
+
 
 // Main
 void setup() {
@@ -297,7 +299,7 @@ int mother_ship_y_offset = 0;
     distanceDisplay.showNumberDec(0);
 
     // Calculate elapsed time (in ms) from first thrust.
-    unsigned long elapsed_time = millis() - approachStartTime;
+    const unsigned long elapsed_time = millis() - approachStartTime;
 
     // Now format to fractional seconds (SS.SSS) using sprintf
     char buffer[20];  // buffer long enough for final display line.
@@ -370,10 +372,10 @@ const unsigned char* getEndingBitmap() {
 // Preflight display
 // Update lander display with the status of our switches for INIT and PREFLIGHT states
 void displayPreFlight(
-  APPROACH_STATE approach_state,
-  bool thrusterLever,
-  bool systemsLever,
-  bool confirmLever
+  const APPROACH_STATE approach_state,
+  const bool thrusterLever,
+  const bool systemsLever,
+  const bool confirmLever
 ) {
   // Display all text referenced from upper left bit X, Y
   landerDisplay.setFontPosTop();
@@ -416,7 +418,7 @@ void processInflightState() {
 }
 
 bool processSpeedState(
-  LANDER_CONTROLS action
+  const LANDER_CONTROLS action
 ) {
   bool actionCompleted = false;
 
@@ -445,7 +447,7 @@ bool processSpeedState(
 }
 
 bool processGearState(
-  LANDER_CONTROLS action
+  const LANDER_CONTROLS action
 ) {
   bool actionCompleted = false;
 
@@ -481,7 +483,7 @@ bool processGearState(
 }
 
 void processSteeringState(
-  LANDER_CONTROLS action
+  const LANDER_CONTROLS action
 ) {
   switch (action) {
     case STEER_UP:
