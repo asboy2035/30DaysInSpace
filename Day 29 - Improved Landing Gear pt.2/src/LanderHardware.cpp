@@ -17,7 +17,7 @@ char control_buttons[CONTROL_ROW_COUNT][CONTROL_COLUMN_COUNT] = {
 };
 
 // Create lander button control object.
-Keypad lander_controls = Keypad(
+auto lander_controls = Keypad(
   makeKeymap(control_buttons),
   const_cast<byte*>(ROW_PINS),
   const_cast<byte*>(COLUMN_PINS),

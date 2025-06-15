@@ -43,6 +43,7 @@ void setup() {
       case APPROACH_FINAL:
         LanderDisplay::displayFinal(game.getCurrentGearBitmapIndex());
         // FALLTHROUGH to APPROACH_IN_FLIGHT to also display in-flight data
+
       case APPROACH_IN_FLIGHT:
         LanderDisplay::displayInFlight(
             game.getLanderDistance(),
